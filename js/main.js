@@ -110,7 +110,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 	function hideMod() {
 		modal.classList.remove('show');
-		modal.classList.add('hide');
+		modal.classList.add('hide');ё
 		document.body.style.overflow = '';
 	}
 
@@ -226,3 +226,4 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
 });
+
