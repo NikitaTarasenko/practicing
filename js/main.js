@@ -151,12 +151,12 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
 	class menuItem {
-		constructor(img, alt, titleH3, desrc, price, parentSelector, ...classes) {
+		constructor(img, alt, titleH3, descr, price, parentSelector, ...classes) {
 			this.img = img;
 			this.alt = alt;
 			this.titleH3 = titleH3;
 			this.price = price;
-			this.desrc = desrc;
+			this.descr = descr;
 			this.transfer = 26;
 			this.convertToUAH();
 			this.parent = document.querySelector(parentSelector);
@@ -177,7 +177,7 @@ window.addEventListener('DOMContentLoaded', () => {
 			<div class="menu__item">
 			<img src="${this.img}" alt="${this.alt}">
 			<h3 class="menu__item-subtitle">${this.titleH3}</h3>
-			<div class="menu__item-descr">${this.desrc}</div>
+			<div class="menu__item-descr">${this.descr}</div>
 			<div class="menu__item-divider"></div>
 			<div class="menu__item-price">
 				<div class="menu__item-cost">Цена:</div>
@@ -193,20 +193,69 @@ window.addEventListener('DOMContentLoaded', () => {
 			this.price = this.price * this.transfer;
 		}
 	}
-	const getResource = async (url) => {
-		let res = await fetch(url);
-		return await res.json();
-	};
+	// const getResource = async (url) => {
+	// 	let res = await fetch(url);
 
-	getResource('http://localhost:3000/menu')
+	// 	if (!res.ok) {
+	// 		throw new Error(` Couldnt fetch ${url}, status : ${res.status}`);
+	// 	}
+
+	// 	return await res.json();
+	// };
+
+	axios.get('http://localhost:3000/menu')
 		.then(data => {
-			data.forEach(({img, altimg, title, descr, price}) => {
+			console.log(data);
+			data.data.forEach(({
+				img,
+				altimg,
+				title,
+				descr,
+				price
+			}) => {
 				new menuItem(img, altimg, title, descr, price, '.menu__field .container').renderMenuItem();
 			});
 		});
 
+	// getResource('http://localhost:3000/menu')
+	// 	.then(data => {
+	// 		data.forEach(({img, altimg, title, descr, price}) => {
+	// 			new menuItem(img, altimg, title, descr, price, '.menu__field .container').renderMenuItem();
+	// 		});
+	// 	});
+
+	// getResource('http://localhost:3000/menu')
+	// 	.then(data => createCard(data));
 
 
+	// const createCard = (data) => {
+	// 	data.forEach(({
+	// 		img,
+	// 		altimg,
+	// 		title,
+	// 		descr,
+	// 		price
+	// 	}) => {
+	// 		const element = document.createElement('div');
+	// 		price = price * 26;
+	// 		element.classList.add('menu__item');
+
+	// 		element.innerHTML = `
+	// 		<div class="menu__item">
+	// 		<img src="${img}" alt="${altimg}">
+	// 		<h3 class="menu__item-subtitle">${title}</h3>
+	// 		<div class="menu__item-descr">${descr}</div>
+	// 		<div class="menu__item-divider"></div>
+	// 		<div class="menu__item-price">
+	// 			<div class="menu__item-cost">Цена:</div>
+	// 			<div class="menu__item-total"><span>${price}</span> грн/день</div>
+	// 		</div>
+	// 	</div>
+	// 		`;
+
+	// 		document.querySelector('.menu .container').append(element);
+	// 	});
+	// };
 	// form
 
 	const forms = document.querySelectorAll('form');
@@ -228,7 +277,7 @@ window.addEventListener('DOMContentLoaded', () => {
 			},
 			body: data
 		});
-		
+
 		return await res.json();
 	};
 
@@ -248,7 +297,7 @@ window.addEventListener('DOMContentLoaded', () => {
 			form.insertAdjacentElement('afterend', message);
 
 			const formData = new FormData(form);
-		
+
 			// const clone = {};
 
 			// formData.forEach((key, value) => {
@@ -256,7 +305,7 @@ window.addEventListener('DOMContentLoaded', () => {
 			// });
 			const json = JSON.stringify(Object.fromEntries(formData.entries()));
 
- 
+
 
 			postData('http://localhost:3000/requests', json)
 				.then((data) => {
@@ -269,7 +318,7 @@ window.addEventListener('DOMContentLoaded', () => {
 					form.reset();
 					message.remove();
 				});
-			 
+
 			// request.addEventListener('load', () => {
 			// 	if (request.status === 200) {
 			// 		showStatusMessage(messages.loaded);
@@ -329,4 +378,141 @@ window.addEventListener('DOMContentLoaded', () => {
 		.then(data => data.json())
 		.then(data => console.log(data));
 
+
+	// slieder 
+
+	const slidesArray = document.querySelectorAll('.offer__slide'),
+		slider = document.querySelector('.offer__slider'),
+		navPrev = document.querySelector('.offer__slider-prev'),
+		navNext = document.querySelector('.offer__slider-next'),
+		slidesWrapper = document.querySelector('.offer__slider-wrapper'),
+		sliderField = document.querySelector('.offer__slider-inner'),
+		width = window.getComputedStyle(slidesWrapper).width,
+		totalBtn = document.querySelector('#total'),
+		currentBtn = document.querySelector('#current');
+	let current = 0;
+	let prev = 0;
+	let offSet = 0;
+
+	totalBtn.innerHTML = currentNumb(slidesArray.length);
+	currentBtn.innerHTML = currentNumb(1);
+
+	sliderField.style.width = 100 * slidesArray.length + '%';
+	slidesArray.forEach((slide) => {
+		slide.style.width = width;
+	});
+	slider.style.position = 'relative';
+	
+
+	const dots = document.createElement('ul'),
+		dotsArray = [];
+	dots.classList.add('carousel_dots');
+
+	slider.append(dots);
+
+	for(let i = 0; i < slidesArray.length; i++) {
+		const  dot = document.createElement('li');
+		dot.setAttribute('data-slide-to', i + 1);
+		dot.classList.add('dot');
+		dots.append(dot);
+		dotsArray.push(dot);
+		if(i == 0)
+		{
+			dot.style.opacity = 1;
+		}
+		 
+	}
+
+
+
+	navNext.addEventListener('click', () => {
+		if( offSet == +width.slice(0, width.length - 2) * (slidesArray.length -1))
+		{
+			offSet = 0;
+			current = 1;
+		}
+		else{
+			offSet += +width.slice(0, width.length - 2);
+			current ++;
+		}
+		sliderField.style.transform = `translateX(-${offSet}px)`;
+		currentBtn.innerHTML = currentNumb(current);
+		activeDot(current);
+	});
+
+	navPrev.addEventListener('click', () => {
+		if(	offSet == 0 )
+		{
+			offSet = +width.slice(0, width.length - 2) * (slidesArray.length -1);
+			current = slidesArray.length;
+		}
+		else{
+			offSet -= +width.slice(0, width.length - 2);
+			current --;
+		}
+		sliderField.style.transform = `translateX(-${offSet}px)`;
+		currentBtn.innerHTML = currentNumb(current);
+		activeDot(current);
+	});
+
+	function activeDot(n){
+		dotsArray.forEach(item => item.style.opacity = 0.5);
+		dotsArray[n - 1].style.opacity = 1;
+	}
+	
+	dotsArray.forEach(dot => {
+		dot.addEventListener('click', (e)=>{
+			console.log('asdasd');
+			const slideTo = e.target.getAttribute('data-slide-to');
+			current = slideTo;
+			offSet = +width.slice(0, width.length - 2) * (current -1); 
+
+			sliderField.style.transform = `translateX(-${offSet}px)`;
+			activeDot(current);
+		});
+	});
+
+	// totalBtn.innerHTML = currentNumb(slidesArray.length);
+	// plusSlides(current);
+
+	// function plusSlides(n) {
+	// 	showSlides(current +=n);
+	// }
+	// function showSlides(n) {
+	// 	if (n <= -1) {
+	// 		current = slidesArray.length - 1;
+	// 	}
+	// 	if (n >= slidesArray.length) {
+	// 		current = 0;
+	// 	}
+
+	// 	slidesArray.forEach((item) => {
+	// 		removeSlides(item);
+	// 	});
+
+	// 	slidesArray[current].classList.add('opacityOn');
+	// 	slidesArray[current].classList.remove('opacityOff');
+	// 	currentBtn.innerHTML = currentNumb(current + 1);
+	// }
+
+	// navPrev.addEventListener('click', () => {
+	// 	plusSlides(-1);
+	// });
+	// navNext.addEventListener('click', () => {
+	// 	plusSlides(1);
+	// });
+
+
+	// function removeSlides(item) {
+	// 	item.classList.add('opacityOff');
+	// 	item.classList.remove('opacityOn');
+	// }
+
+	function currentNumb(numb) {
+		if (numb < 10) {
+			return `0${numb}`;
+		} else {
+			return numb;
+		}
+	}
 });
