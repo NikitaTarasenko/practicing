@@ -1,0 +1,22 @@
+{
+  "name": "food-dist",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NikitaTarasenko/practicing.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NikitaTarasenko/practicing/issues"
+  },
+  "homepage": "https://github.com/NikitaTarasenko/practicing#readme",
+  "dependencies": {
+    "json-server": "^0.16.3"
+  }
+}

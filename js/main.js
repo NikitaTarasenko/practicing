@@ -175,7 +175,7 @@ window.addEventListener('DOMContentLoaded', () => {
 			element.innerHTML =
 				`
 			<div class="menu__item">
-			<img src="img/tabs/${this.img}" alt="${this.alt}">
+			<img src="${this.img}" alt="${this.alt}">
 			<h3 class="menu__item-subtitle">${this.titleH3}</h3>
 			<div class="menu__item-descr">${this.desrc}</div>
 			<div class="menu__item-divider"></div>
@@ -193,33 +193,18 @@ window.addEventListener('DOMContentLoaded', () => {
 			this.price = this.price * this.transfer;
 		}
 	}
+	const getResource = async (url) => {
+		let res = await fetch(url);
+		return await res.json();
+	};
 
-	new menuItem(
-		'vegy.jpg',
-		'vegy',
-		'Меню "Фитнес',
-		'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
-		229,
-		'.menu__field .container'
-	).renderMenuItem();
+	getResource('http://localhost:3000/menu')
+		.then(data => {
+			data.forEach(({img, altimg, title, descr, price}) => {
+				new menuItem(img, altimg, title, descr, price, '.menu__field .container').renderMenuItem();
+			});
+		});
 
-	new menuItem(
-		'elite.jpg',
-		'elite',
-		'Меню “Премиум” ',
-		'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!',
-		550,
-		'.menu__field .container',
-		'big'
-	).renderMenuItem();
-
-	new menuItem('post.jpg',
-		'post',
-		'Меню Постное ',
-		'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.',
-		430,
-		'.menu__field .container'
-	).renderMenuItem();
 
 
 	// form
@@ -232,15 +217,27 @@ window.addEventListener('DOMContentLoaded', () => {
 	};
 
 	forms.forEach(item => {
-		postData(item);
+		bindPostData(item);
 	});
 
-	function postData(form) {
+	const postData = async (url, data) => {
+		let res = await fetch(url, {
+			method: "POST",
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: data
+		});
+		
+		return await res.json();
+	};
+
+	function bindPostData(form) {
 		form.addEventListener('submit', (e) => {
 			e.preventDefault();
 
-			const message = document.createElement('img')
-				
+			let message = document.createElement('img');
+
 			message.src = messages.loading;
 			message.style.cssText = `
 				display : block;
@@ -248,37 +245,43 @@ window.addEventListener('DOMContentLoaded', () => {
 				margin-top : 20px;
 			`;
 
-			// showStatusMessage(messages.loading);
-			// form.append(message);
 			form.insertAdjacentElement('afterend', message);
 
-			const request = new XMLHttpRequest();
-			request.open('POST', 'server.php');
-			request.setRequestHeader('Content-type', 'application/json');
-
 			const formData = new FormData(form);
+		
+			// const clone = {};
 
-			const clone = {};
+			// formData.forEach((key, value) => {
+			// 	clone[key] = value;
+			// });
+			const json = JSON.stringify(Object.fromEntries(formData.entries()));
 
-			formData.forEach((key, value) => {
-				clone[key] = value;
-			});
-			const json = JSON.stringify(clone);
+ 
 
-			request.send(json);
-
-			request.addEventListener('load', () => {
-				if (request.status === 200) {
+			postData('http://localhost:3000/requests', json)
+				.then((data) => {
+					console.log(data);
 					showStatusMessage(messages.loaded);
-					console.log(request.response);
-					form.reset();
-					 
 					message.remove();
-					 
-				} else {
+				}).catch(() => {
 					showStatusMessage(messages.error);
-				}
-			});
+				}).finally(() => {
+					form.reset();
+					message.remove();
+				});
+			 
+			// request.addEventListener('load', () => {
+			// 	if (request.status === 200) {
+			// 		showStatusMessage(messages.loaded);
+			// 		console.log(request.response);
+			// 		form.reset();
+
+			// 		message.remove();
+
+			// 	} else {
+			// 		showStatusMessage(messages.error);
+			// 	}
+			// });
 		});
 
 	}
@@ -307,5 +310,23 @@ window.addEventListener('DOMContentLoaded', () => {
 			hideMod();
 		}, 4000);
 	}
+
+
+	// fetch('https://jsonplaceholder.typicode.com/posts', {
+	// 		method: 'POST',
+	// 		body: JSON.stringify({
+	// 			name: 'Nikita'
+	// 		}),
+	// 		headers: {
+	// 			'Content-type': 'application/json'
+	// 		}
+	// 	})
+	// 	.then(response => response.json())
+	// 	.then(json => console.log(json));
+
+
+	fetch('http://localhost:3000/requests')
+		.then(data => data.json())
+		.then(data => console.log(data));
 
 });
