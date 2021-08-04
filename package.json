@@ -18,5 +18,9 @@
   "homepage": "https://github.com/NikitaTarasenko/practicing#readme",
   "dependencies": {
     "json-server": "^0.16.3"
+  },
+  "devDependencies": {
+    "webpack": "^5.47.1",
+    "webpack-cli": "^4.7.2"
   }
 }

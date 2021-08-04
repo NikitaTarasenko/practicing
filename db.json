@@ -33,59 +33,19 @@
       "id": 2
     },
     {
-      "123123": "phone",
-      "asdasd": "name",
+      "name": "asd",
+      "phone": "123123",
       "id": 3
     },
     {
-      "123123": "phone",
-      "asdasd": "name",
+      "name": "asd",
+      "phone": "asdas",
       "id": 4
     },
     {
-      "34234": "phone",
-      "asd": "name",
-      "id": 5
-    },
-    {
-      "name": "qwdqwd",
-      "phone": "12323",
-      "id": 6
-    },
-    {
-      "name": "asdasdas",
-      "phone": "1241241",
-      "id": 7
-    },
-    {
-      "name": "12313",
-      "phone": "dasdasd",
-      "id": 8
-    },
-    {
-      "name": "ads",
-      "phone": "123",
-      "id": 9
-    },
-    {
-      "name": "йуйфвы",
-      "phone": "123214",
-      "id": 10
-    },
-    {
       "name": "asd",
-      "phone": "123",
-      "id": 11
-    },
-    {
-      "name": "adasd",
-      "phone": "23123",
-      "id": 12
-    },
-    {
-      "name": "asdasd",
-      "phone": "312123",
-      "id": 13
+      "phone": "123123",
+      "id": 5
     }
   ]
 }
